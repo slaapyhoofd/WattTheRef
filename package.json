@@ -1,0 +1,46 @@
+{
+    "name": "watttheref",
+    "version": "0.1.0",
+    "description": "WattTheRef is a Telegram bot that helps chat groups provide lotery style ref links from users",
+    "main": "dist/src/index.js",
+    "scripts": {
+        "bundle": "rimraf dist && esbuild --outdir=dist --sourcemap --bundle --platform=node --target=node22.11.0 ./src/index.ts",
+        "compile": "tsc",
+        "compile:watch": "tsc -w",
+        "dev": "nodemon --watch src --watch test --ext ts,json --exec 'yarn bundle && yarn start'",
+        "debug": "yarn bundle && node --enable-source-maps --inspect-brk ./dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node --enable-source-maps ./dist/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/slaapyhoofd/WattTheRef.git"
+    },
+    "keywords": [
+        "nodejs",
+        "typescript",
+        "lowdb",
+        "telegraf"
+    ],
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/slaapyhoofd/WattTheRef/issues"
+    },
+    "homepage": "https://github.com/slaapyhoofd/WattTheRef#readme",
+    "dependencies": {
+        "@types/lowdb": "^1.0.15",
+        "@types/node": "^22.10.0",
+        "dotenv": "^16.4.5",
+        "lowdb": "^7.0.1",
+        "telegraf": "^4.16.3",
+        "typescript": "^5.7.2"
+    },
+    "devDependencies": {
+        "@tsconfig/node22": "^22.0.0",
+        "esbuild": "^0.24.0",
+        "nodemon": "^3.1.7",
+        "prettier": "^3.4.1",
+        "rimraf": "^6.0.1"
+    }
+}
