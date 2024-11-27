@@ -19,11 +19,15 @@ interface Database {
     referrals: Referrals;
 }
 
-const allowedCompanies = ['Tesla', 'Tibber'];
+const allowedCompanies = ['FrankEnergie', 'HomeWizard', 'Tesla', 'Tibber', 'Quatt', 'WeHeat'];
 const defaultData: Database = {
     referrals: {
+        FrankEnergie: {},
+        HomeWizard: {},
         Tesla: {},
         Tibber: {},
+        Quatt: {},
+        WeHeat: {},
     },
 };
 
@@ -34,6 +38,7 @@ async function start() {
     const db = await JSONFilePreset<Database>('db.json', defaultData);
 
     bot.command('refferal', async (ctx) => {
+        // @ts-ignore
         const [command, company, url] = ctx.message.text.split(' ');
         const userId = `${ctx.from.id}`;
         const username = ctx.from.username || ctx.from.first_name;
@@ -72,6 +77,7 @@ async function start() {
     });
 
     bot.command('refferals', (ctx) => {
+        // @ts-ignore
         const [command, company] = ctx.message.text.split(' ');
         const refferals = db.data.referrals[company as string];
         const username = ctx.from.username || ctx.from.first_name;

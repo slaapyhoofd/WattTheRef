@@ -5,12 +5,9 @@
     "main": "dist/src/index.js",
     "scripts": {
         "bundle": "rimraf dist && esbuild --outdir=dist --sourcemap --bundle --platform=node --target=node22.11.0 ./src/index.ts",
-        "compile": "tsc",
-        "compile:watch": "tsc -w",
-        "dev": "nodemon --watch src --watch test --ext ts,json --exec 'yarn bundle && yarn start'",
-        "debug": "yarn bundle && node --enable-source-maps --inspect-brk ./dist/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node --enable-source-maps ./dist/index.js"
+        "compile": "rimraf dist && esbuild --outdir=dist --bundle --platform=node --target=node22.11.0 ./src/index.ts",
+        "dev": "node --enable-source-maps ./dist/index.js",
+        "start": "node ./dist/index.js"
     },
     "repository": {
         "type": "git",
@@ -39,7 +36,6 @@
     "devDependencies": {
         "@tsconfig/node22": "^22.0.0",
         "esbuild": "^0.24.0",
-        "nodemon": "^3.1.7",
         "prettier": "^3.4.1",
         "rimraf": "^6.0.1"
     }
