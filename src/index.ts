@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Telegraf } from 'telegraf';
-import { JSONFilePreset } from 'lowdb/node';
+import { JSONFileSyncPreset } from 'lowdb/node';
 
 interface Referral {
     url: string;
@@ -35,7 +35,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
 async function start() {
     // Read or create db.json
-    const db = await JSONFilePreset<Database>('db.json', defaultData);
+    const db = JSONFileSyncPreset<Database>('db.json', defaultData);
 
     bot.command('refferal', async (ctx) => {
         // @ts-ignore
