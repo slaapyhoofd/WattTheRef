@@ -4,10 +4,13 @@
     "description": "WattTheRef is a Telegram bot that helps chat groups provide lotery style ref links from users",
     "main": "dist/src/index.js",
     "scripts": {
-        "bundle": "rimraf dist && esbuild --outdir=dist --sourcemap --bundle --platform=node --target=node22.11.0 ./src/index.ts",
-        "compile": "rimraf dist && esbuild --outdir=dist --bundle --platform=node --target=node22.11.0 ./src/index.ts",
+        "bundle": "rimraf dist && prisma generate && esbuild --outdir=dist --sourcemap --bundle --platform=node --target=node22.11.0 --external:better-sqlite3 ./src/index.ts",
+        "compile": "rimraf dist && prisma generate && esbuild --outdir=dist --bundle --platform=node --target=node22.11.0 --external:better-sqlite3 ./src/index.ts",
         "dev": "node --enable-source-maps ./dist/index.js",
-        "start": "node ./dist/index.js"
+        "start": "node ./dist/index.js",
+        "db:push": "prisma db push",
+        "db:studio": "prisma studio",
+        "db:seed": "npx tsx prisma/seed.ts"
     },
     "repository": {
         "type": "git",
@@ -16,7 +19,7 @@
     "keywords": [
         "nodejs",
         "typescript",
-        "lowdb",
+        "prisma",
         "telegraf"
     ],
     "author": "",
@@ -26,16 +29,21 @@
     },
     "homepage": "https://github.com/slaapyhoofd/WattTheRef#readme",
     "dependencies": {
+        "@prisma/adapter-better-sqlite3": "^7.3.0",
+        "@prisma/client": "^7.3.0",
         "@types/node": "^25.0.10",
+        "better-sqlite3": "^12.6.2",
         "dotenv": "^17.2.3",
-        "lowdb": "^7.0.1",
         "telegraf": "^4.16.3",
         "typescript": "^5.9.3"
     },
     "devDependencies": {
         "@tsconfig/node22": "^22.0.5",
+        "@types/better-sqlite3": "^7.6.13",
         "esbuild": "^0.27.2",
         "prettier": "^3.8.1",
-        "rimraf": "^6.1.2"
+        "prisma": "^7.3.0",
+        "rimraf": "^6.1.2",
+        "tsx": "^4.21.0"
     }
 }

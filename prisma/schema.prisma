@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Company {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  referrals Referral[]
+  createdAt DateTime   @default(now())
+}
+
+model Referral {
+  id        Int      @id @default(autoincrement())
+  userId    String   // Telegram user ID
+  username  String   // Telegram username or first_name
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
+  url       String   // Referral URL
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, companyId]) // One referral per user per company
+}

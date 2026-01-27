@@ -1,3 +1,32 @@
-# .dockerignore
+# Dependencies
 node_modules
+
+# Build output
 dist
+
+# Local data
+data/
+
+# Environment files
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+.claude
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md

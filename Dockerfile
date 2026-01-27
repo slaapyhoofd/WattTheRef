@@ -1,12 +1,32 @@
-FROM node:22
+FROM node:22-slim
 
 WORKDIR /app
 
+# Install OpenSSL for Prisma and build tools for native modules
+RUN apt-get update && apt-get install -y openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
+
+# Copy package files and install dependencies (includes native module compilation)
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-COPY . .
+# Copy prisma schema and generate client
+COPY prisma ./prisma/
+COPY prisma.config.ts ./
+RUN npx prisma generate
 
-RUN npm run bundle
+# Copy source code and build
+COPY src ./src/
+COPY tsconfig.json ./
+RUN npm run compile
 
-CMD [ "npm", "start" ]
+# Create data directory for SQLite database (will be mounted as volume)
+RUN mkdir -p data
+
+# Copy entrypoint script and fix Windows line endings
+COPY docker-entrypoint.sh ./
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+
+# Data volume for persistent storage
+VOLUME /app/data
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
