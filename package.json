@@ -26,17 +26,16 @@
     },
     "homepage": "https://github.com/slaapyhoofd/WattTheRef#readme",
     "dependencies": {
-        "@types/lowdb": "^1.0.15",
-        "@types/node": "^22.10.0",
-        "dotenv": "^16.4.5",
+        "@types/node": "^25.0.10",
+        "dotenv": "^17.2.3",
         "lowdb": "^7.0.1",
         "telegraf": "^4.16.3",
-        "typescript": "^5.7.2"
+        "typescript": "^5.9.3"
     },
     "devDependencies": {
-        "@tsconfig/node22": "^22.0.0",
-        "esbuild": "^0.24.0",
-        "prettier": "^3.4.1",
-        "rimraf": "^6.0.1"
+        "@tsconfig/node22": "^22.0.5",
+        "esbuild": "^0.27.2",
+        "prettier": "^3.8.1",
+        "rimraf": "^6.1.2"
     }
 }

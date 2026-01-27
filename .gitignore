@@ -130,4 +130,5 @@ dist
 .pnp.*
 
 # local
-db.json
+data/db.json
+.claude/

@@ -35,7 +35,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
 async function start() {
     // Read or create db.json
-    const db = JSONFileSyncPreset<Database>('db.json', defaultData);
+    const db = JSONFileSyncPreset<Database>('data/db.json', defaultData);
 
     bot.command('refferal', async (ctx) => {
         // @ts-ignore
