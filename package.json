@@ -4,10 +4,10 @@
     "description": "WattTheRef is a Telegram bot that helps chat groups provide lotery style ref links from users",
     "main": "dist/src/index.js",
     "scripts": {
-        "bundle": "rimraf dist && prisma generate && esbuild --outdir=dist --sourcemap --bundle --platform=node --target=node22.11.0 --external:better-sqlite3 ./src/index.ts",
-        "compile": "rimraf dist && prisma generate && esbuild --outdir=dist --bundle --platform=node --target=node22.11.0 --external:better-sqlite3 ./src/index.ts",
-        "dev": "node --enable-source-maps ./dist/index.js",
-        "start": "node ./dist/index.js",
+        "bundle": "rimraf dist && prisma generate && vite build --mode bundle",
+        "compile": "rimraf dist && prisma generate && vite build",
+        "dev": "prisma generate && vite build --watch",
+        "start": "node ./dist/src/index.js",
         "db:push": "prisma db push",
         "db:studio": "prisma studio",
         "db:seed": "npx tsx prisma/seed.ts"
@@ -38,12 +38,12 @@
         "typescript": "^5.9.3"
     },
     "devDependencies": {
-        "@tsconfig/node22": "^22.0.5",
+        "@tsconfig/node24": "^24.0.0",
         "@types/better-sqlite3": "^7.6.13",
-        "esbuild": "^0.27.2",
         "prettier": "^3.8.1",
         "prisma": "^7.3.0",
         "rimraf": "^6.1.2",
-        "tsx": "^4.21.0"
+        "tsx": "^4.21.0",
+        "vite": "^7.0.0"
     }
 }

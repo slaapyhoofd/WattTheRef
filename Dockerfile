@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:24.13.0-slim
 
 WORKDIR /app
 
@@ -17,6 +17,7 @@ RUN npx prisma generate
 # Copy source code and build
 COPY src ./src/
 COPY tsconfig.json ./
+COPY vite.config.mts ./
 RUN npm run compile
 
 # Create data directory for SQLite database (will be mounted as volume)
