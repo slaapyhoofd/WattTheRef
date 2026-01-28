@@ -2,15 +2,15 @@ import 'dotenv/config';
 import { Telegraf } from 'telegraf';
 import { disconnectDatabase } from './lib/database';
 import { registerAddCommand } from './commands/add';
-import { registerRefferalCommand } from './commands/refferal';
-import { registerRefferalsCommand } from './commands/refferals';
+import { registerRefCommand } from './commands/ref';
+import { registerRefsCommand } from './commands/refs';
 
 const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
 // Register commands
 registerAddCommand(bot);
-registerRefferalCommand(bot);
-registerRefferalsCommand(bot);
+registerRefCommand(bot);
+registerRefsCommand(bot);
 
 // Global error handler
 bot.catch((err, ctx) => {

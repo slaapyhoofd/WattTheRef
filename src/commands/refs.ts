@@ -1,8 +1,8 @@
 import { Telegraf, Context } from 'telegraf';
-import { getCompanyNames, getCompanyByName, getRandomReferral } from '../lib/database';
+import { getCompanyNames, getCompanyByName, getAllReferrals } from '../lib/database';
 
-export function registerRefferalCommand(bot: Telegraf<Context>) {
-    bot.command('refferal', async (ctx) => {
+export function registerRefsCommand(bot: Telegraf<Context>) {
+    bot.command('refs', async (ctx) => {
         try {
             if (!ctx.message || !('text' in ctx.message)) return;
 
@@ -25,17 +25,21 @@ export function registerRefferalCommand(bot: Telegraf<Context>) {
                 return;
             }
 
-            // Return a random referral link
-            const randomReferral = await getRandomReferral(company.id);
+            const referrals = await getAllReferrals(company.id);
 
-            if (!randomReferral) {
-                await ctx.reply(`No referral links found for ${company.name} yet. Be the first Planeteer to add one!`);
+            if (referrals.length === 0) {
+                await ctx.reply(`No referral links found for ${company.name} yet.`);
                 return;
             }
 
-            await ctx.replyWithHTML(`🌍 Here is a referral link for ${company.name} from Planeteer @${randomReferral.username}. Go Planet! 🌍\n${randomReferral.url}`, { link_preview_options: { is_disabled: true } });
+            let responseMessage = `🌍 Here are the Planeteers' referral links for ${company.name}. The power is yours! 🌍\n`;
+            for (const referral of referrals) {
+                responseMessage += `• Planeteer @${referral.username}: ${referral.url}\n`;
+            }
+
+            await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
         } catch (error) {
-            console.error('Error in /refferal command:', error);
+            console.error('Error in /refs command:', error);
             await ctx.reply('Sorry, something went wrong. Please try again later.');
         }
     });
