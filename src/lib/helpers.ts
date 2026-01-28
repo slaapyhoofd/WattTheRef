@@ -20,6 +20,10 @@ function scheduleDelete(ctx: Context, messageId: number): void {
         try {
             await ctx.deleteMessage(messageId);
         } catch (error) {
+            // Silently ignore "message not found" errors - message was likely already deleted by user interaction
+            if (error instanceof Error && error.message.includes('message to delete not found')) {
+                return;
+            }
             console.error(`[AUTO-DELETE] Failed to delete message ${messageId}:`, error);
         }
     }, AUTO_DELETE_DELAY_MS);
