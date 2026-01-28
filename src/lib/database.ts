@@ -41,6 +41,14 @@ export async function getAllReferrals(companyId: number) {
     });
 }
 
+export async function getAllCompanies() {
+    return prisma.company.findMany();
+}
+
+export async function getCompanyById(id: number) {
+    return prisma.company.findUnique({ where: { id } });
+}
+
 export async function disconnectDatabase() {
     await prisma.$disconnect();
 }
