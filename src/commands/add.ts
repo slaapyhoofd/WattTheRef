@@ -102,6 +102,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
         }
 
         pendingSelections.set(userId, companyId);
+        await ctx.deleteMessage();
         await replyAndDelete(ctx, Messages.SEND_URL_INTERACTIVE(company.name), { parse_mode: 'Markdown' });
         await ctx.answerCbQuery();
     });
@@ -110,6 +111,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
     bot.action('cancel_add', async (ctx) => {
         const userId = ctx.from.id;
         pendingSelections.delete(userId);
+        await ctx.deleteMessage();
         await replyAndDelete(ctx, Messages.CANCELLED);
         await ctx.answerCbQuery();
         logCommandCancel(ctx, 'add');

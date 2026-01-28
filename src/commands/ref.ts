@@ -69,6 +69,7 @@ export function registerRefCommand(bot: Telegraf<Context>) {
             const randomReferral = await getRandomReferral(company.id);
 
             if (!randomReferral) {
+                await ctx.deleteMessage();
                 await replyAndDelete(ctx, Messages.NO_REFERRALS(company.name));
                 await ctx.answerCbQuery();
                 logCommandSuccess(ctx, 'ref');
@@ -76,6 +77,7 @@ export function registerRefCommand(bot: Telegraf<Context>) {
             }
 
             // Referral link message persists for user access
+            await ctx.deleteMessage();
             await ctx.replyWithHTML(formatReferralLink(company.name, randomReferral.username, randomReferral.url), { link_preview_options: { is_disabled: true } });
             await ctx.answerCbQuery();
             logCommandSuccess(ctx, 'ref');
@@ -88,6 +90,7 @@ export function registerRefCommand(bot: Telegraf<Context>) {
 
     // Handle cancel button
     bot.action('cancel_ref', async (ctx) => {
+        await ctx.deleteMessage();
         await replyAndDelete(ctx, Messages.CANCELLED_ALT);
         await ctx.answerCbQuery();
         logCommandCancel(ctx, 'ref');

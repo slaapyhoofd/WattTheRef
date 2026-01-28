@@ -82,12 +82,14 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
             const referrals = await getAllReferrals(company.id);
 
             if (referrals.length === 0) {
+                await ctx.deleteMessage();
                 await ctx.answerCbQuery();
                 await replyAndDelete(ctx, getNoReferralsMessage(company.name));
                 return;
             }
 
             const responseMessage = formatReferralList(company.name, referrals);
+            await ctx.deleteMessage();
             await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
             await ctx.answerCbQuery();
             logCommandSuccess(ctx, 'refs');
