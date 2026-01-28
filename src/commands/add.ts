@@ -1,6 +1,7 @@
 import { Telegraf, Context } from 'telegraf';
-import { getCompanyNames, getCompanyByName, addReferral, getAllCompanies, getCompanyById } from '../lib/database';
+import { getCompanyByName, addReferral, getCompanyById } from '../lib/database';
 import { logCommandStart, logCommandSuccess, logCommandCancel, logCommandError } from '../lib/logger';
+import { buildCompanyKeyboard, getInvalidCompanyMessage } from '../lib/helpers';
 
 // Store pending company selections temporarily (userId -> companyId)
 const pendingSelections = new Map<number, number>();
@@ -36,8 +37,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             if (companyName && url) {
                 const company = await getCompanyByName(companyName);
                 if (!company) {
-                    const allowedCompanies = await getCompanyNames();
-                    await ctx.reply(`By the power of Gaia, I must inform you that the company you've mentioned is not recognized. Please choose from the following: ${allowedCompanies.join(', ')}`);
+                    await ctx.reply(await getInvalidCompanyMessage());
                     return;
                 }
 
@@ -57,8 +57,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             if (companyName) {
                 const company = await getCompanyByName(companyName);
                 if (!company) {
-                    const allowedCompanies = await getCompanyNames();
-                    await ctx.reply(`By the power of Gaia, I must inform you that the company you've mentioned is not recognized. Please choose from the following: ${allowedCompanies.join(', ')}`);
+                    await ctx.reply(await getInvalidCompanyMessage());
                     return;
                 }
 
@@ -68,16 +67,12 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             }
 
             // If no args, show company selection buttons and usage info
-            const companies = await getAllCompanies();
+            const keyboard = await buildCompanyKeyboard('add', 'cancel_add');
 
-            if (companies.length === 0) {
+            if (!keyboard) {
                 await ctx.reply('No companies available yet.');
                 return;
             }
-
-            const keyboard = {
-                inline_keyboard: [...companies.map((c) => [{ text: c.name, callback_data: `add_${c.id}` }]), [{ text: '❌ Cancel', callback_data: 'cancel_add' }]],
-            };
 
             const helpText = `🌍 *Add Your Referral Link* 🌍\n\n` + `You can use this command in two ways:\n\n` + `1️⃣ *Traditional:* \`/add CompanyName https://your-referral-url.com\`\n` + `2️⃣ *Interactive:* Select a company below, then send the URL when prompted.\n\n` + `Select a company to add your referral link:`;
 
