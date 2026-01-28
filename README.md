@@ -1,32 +1,38 @@
 # WattTheRef Bot
 
+[![CI](https://github.com/slaapyhoofd/WattTheRef/actions/workflows/ci.yml/badge.svg)](https://github.com/slaapyhoofd/WattTheRef/actions/workflows/ci.yml)
+[![Docker](https://github.com/slaapyhoofd/WattTheRef/actions/workflows/docker.yml/badge.svg)](https://github.com/slaapyhoofd/WattTheRef/actions/workflows/docker.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Greetings, Planeteers! This is your trusty Captain Planet Referral Bot, here to help manage your green energy referral links.
 
 Our mission is to make the world a greener place, one referral at a time. With the power of your referral links, we can help more people join our cause and switch to clean energy. The power is yours!
 
 ## Bot Commands
 
-**/refferal [company] [url]**
+**/add [company] [url]**
 
 Use this command to add or update your referral link for a specific green energy company. Remember, the power is yours to provide a valid URL!
 
-Example: `/refferal Tesla https://www.tesla.com/referral/myreferral`
+Example: `/add Tesla https://www.tesla.com/referral/myreferral`
 
-If you only provide the company name, the bot will return a random referral link for that company, courtesy of a fellow Planeteer.
+**/ref [company]**
 
-Example: `/refferal Tesla`
+Use this command to get a random referral link for a specific green energy company, courtesy of a fellow Planeteer.
 
-**/refferals [company]**
+Example: `/ref Tesla`
+
+**/refs [company]**
 
 Use this command to list all the referral links for a specific green energy company. This will show you all the Planeteers who have shared their referral links for that company.
 
-Example: `/refferals Tesla`
+Example: `/refs Tesla`
 
 ## Setup
 
 ### Prerequisites
 
-- Node.js 22+
+- Node.js 24+
 - npm
 
 ### Installation
@@ -116,7 +122,7 @@ npm run db:seed
 
 ## Tech Stack
 
-- **Runtime**: Node.js 22
+- **Runtime**: Node.js 24
 - **Language**: TypeScript
 - **Bot Framework**: Telegraf
 - **Database**: SQLite

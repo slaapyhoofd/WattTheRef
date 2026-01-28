@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      development:
+        patterns:
+          - "@types/*"
+          - "prettier"
+          - "rimraf"
+          - "tsx"
+          - "vite"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
