@@ -3,6 +3,7 @@ name: Docker
 on:
     push:
         branches: [main]
+        tags: ['v*']
     release:
         types: [published]
     workflow_dispatch:
@@ -43,6 +44,7 @@ jobs:
                       type=semver,pattern={{major}}.{{minor}}
                       type=semver,pattern={{major}}
                       type=sha,prefix=sha-
+                      type=raw,value=latest,enable={{is_default_branch}}
 
             - name: Build and push Docker image
               uses: docker/build-push-action@v6
