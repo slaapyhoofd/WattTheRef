@@ -123,8 +123,8 @@ npm run dev
     ```yaml
     environment:
         - BOT_TOKEN=${BOT_TOKEN}
-        - USER_ID=568 # UID for the container process
-        - GROUP_ID=568 # GID for the container process
+        - USER_ID=1000 # UID for the container process
+        - GROUP_ID=1000 # GID for the container process
         - TZ=Europe/Amsterdam # Timezone for logging (e.g., Europe/Amsterdam, UTC, America/New_York)
     ```
 
@@ -146,8 +146,8 @@ npm run dev
 ```bash
 docker run -d --name watttheref \
   -e BOT_TOKEN=your_token_here \
-  -e USER_ID=568 \
-  -e GROUP_ID=568 \
+  -e USER_ID=1000 \
+  -e GROUP_ID=1000 \
   -e TZ=Europe/Amsterdam \
   -v watttheref-data:/app/data \
   ghcr.io/slaapyhoofd/watttheref:latest
@@ -159,8 +159,8 @@ docker run -d --name watttheref \
 docker build -t watttheref .
 docker run -d --name watttheref \
   -e BOT_TOKEN=your_token_here \
-  -e USER_ID=568 \
-  -e GROUP_ID=568 \
+  -e USER_ID=1000 \
+  -e GROUP_ID=1000 \
   -e TZ=Europe/Amsterdam \
   -v watttheref-data:/app/data \
   watttheref
@@ -169,14 +169,14 @@ docker run -d --name watttheref \
 You can also customize USER_ID and GROUP_ID during build:
 
 ```bash
-docker build -t watttheref --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 .
+docker build -t watttheref --build-arg USER_ID=568 --build-arg GROUP_ID=568 .
 ```
 
 **Environment Variables:**
 
 - `BOT_TOKEN` (required): Your Telegram bot token
-- `USER_ID` (optional, default: 568): UID for the container process. Ensure this user exists on your host system
-- `GROUP_ID` (optional, default: 568): GID for the container process. Ensure this group exists on your host system
+- `USER_ID` (optional, default: 1000): UID for the container process. Ensure this user exists on your host system
+- `GROUP_ID` (optional, default: 1000): GID for the container process. Ensure this group exists on your host system
 - `TZ` (optional, default: UTC): Timezone for logging timestamps (e.g., `Europe/Amsterdam`, `UTC`, `America/New_York`)
 
 The `-v watttheref-data:/app/data` mounts a named volume to persist the SQLite database across container updates.

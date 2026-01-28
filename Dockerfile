@@ -3,8 +3,8 @@ FROM node:25.5.0-slim
 WORKDIR /app
 
 # Build arguments for user/group configuration
-ARG USER_ID=568
-ARG GROUP_ID=568
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 # Install OpenSSL for Prisma and build tools for native modules
 RUN apt-get update && apt-get install -y openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
