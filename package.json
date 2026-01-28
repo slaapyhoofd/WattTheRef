@@ -1,6 +1,6 @@
 {
     "name": "watttheref",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "description": "WattTheRef is a Telegram bot that helps chat groups provide lotery style ref links from users",
     "main": "dist/src/index.js",
     "scripts": {
