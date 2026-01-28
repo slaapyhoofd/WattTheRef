@@ -33,7 +33,17 @@ export const Messages = {
 export const HelpTexts = {
     ADD_USAGE: `You can use this command in two ways:\n\n` + `1️⃣ *Traditional:* \`/add CompanyName https://your-referral-url.com\`\n` + `2️⃣ *Interactive:* Select a company below, then send the URL when prompted.\n\n` + `Select a company to add your referral link:`,
 
-    HELP_MESSAGE: `🌍 *Greetings, Planeteer!* 🌍\n\n` + `I'm here to help you share the power of referral links! Here's what you can do:\n\n` + `🔹 */ref* - Get a random referral link\n` + `🔹 */refs* - View all referral links for a company\n` + `🔹 */add* - Add your referral link (DM me directly!)\n\n` + `⚡️ *Important:* To add your referral links, message me directly instead of in the group. The power to share is yours, but keep it private!\n\n` + `With our powers combined, we'll make the world a better place! 🌱`,
+    HELP_MESSAGE:
+        `🌍 *Greetings, Planeteer!* 🌍\n\n` +
+        `I'm here to help you share the power of referral links! Here's what you can do:\n\n` +
+        `🔹 */ref* - Get a random referral link\n` +
+        `   \`/ref CompanyName\` or use buttons\n\n` +
+        `🔹 */refs* - View all referral links for a company\n` +
+        `   \`/refs CompanyName\` or use buttons\n\n` +
+        `🔹 */add* - Add your referral link (DM me directly!)\n` +
+        `   \`/add CompanyName https://url.com\` or use buttons\n\n` +
+        `⚡️ *Important:* To add your referral links, message me directly instead of in the group. The power to share is yours, but keep it private!\n\n` +
+        `With our powers combined, we'll make the world a better place! 🌱`,
 };
 
 // Text formatting helpers
