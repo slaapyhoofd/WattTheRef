@@ -38,40 +38,46 @@ Example: `/refs Tesla`
 ### Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/slaapyhoofd/WattTheRef.git
-   cd WattTheRef
-   ```
+
+    ```bash
+    git clone https://github.com/slaapyhoofd/WattTheRef.git
+    cd WattTheRef
+    ```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+
+    ```bash
+    npm install
+    ```
 
 3. Create a `.env` file with your Telegram bot token:
-   ```
-   BOT_TOKEN=your_telegram_bot_token_here
-   ```
+
+    ```
+    BOT_TOKEN=your_telegram_bot_token_here
+    ```
 
 4. Initialize the database and seed companies:
-   ```bash
-   npm run db:push
-   npm run db:seed
-   ```
+
+    ```bash
+    npm run db:push
+    npm run db:seed
+    ```
 
 5. Build the project:
-   ```bash
-   npm run compile
-   ```
+
+    ```bash
+    npm run compile
+    ```
 
 6. Start the bot:
-   ```bash
-   npm start
-   ```
+    ```bash
+    npm start
+    ```
 
 ### Development
 
 Run with source maps for debugging:
+
 ```bash
 npm run bundle
 npm run dev
@@ -91,6 +97,7 @@ The `-v watttheref-data:/app/data` mounts a named volume to persist the SQLite d
 On first run, the entrypoint script automatically initializes the database and seeds the companies. On subsequent runs, it uses the existing database from the volume.
 
 To update the container while preserving data:
+
 ```bash
 docker build -t watttheref .
 docker stop watttheref && docker rm watttheref
@@ -103,19 +110,20 @@ This bot uses SQLite with Prisma ORM. The database is stored in `data/watttheref
 
 ### Available npm scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run compile` | Build the project |
-| `npm run bundle` | Build with source maps |
-| `npm run dev` | Run with source maps enabled |
-| `npm start` | Run the bot |
-| `npm run db:push` | Push schema changes to database |
-| `npm run db:seed` | Seed companies to database |
+| Command             | Description                       |
+| ------------------- | --------------------------------- |
+| `npm run compile`   | Build the project                 |
+| `npm run bundle`    | Build with source maps            |
+| `npm run dev`       | Run with source maps enabled      |
+| `npm start`         | Run the bot                       |
+| `npm run db:push`   | Push schema changes to database   |
+| `npm run db:seed`   | Seed companies to database        |
 | `npm run db:studio` | Open Prisma Studio to browse data |
 
 ### Adding new companies
 
 Edit `prisma/seed.ts` and add the company name to the `companies` array, then run:
+
 ```bash
 npm run db:seed
 ```
