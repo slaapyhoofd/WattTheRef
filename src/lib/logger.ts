@@ -1,7 +1,8 @@
 import { Context } from 'telegraf';
 
 function getTimestamp(): string {
-    return new Date().toISOString();
+    const tz = process.env.TZ || 'UTC';
+    return new Date().toLocaleString('en-US', { timeZone: tz });
 }
 
 function getUserInfo(ctx: Context): string {

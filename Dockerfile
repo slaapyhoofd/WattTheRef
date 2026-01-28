@@ -2,6 +2,10 @@ FROM node:25.5.0-slim
 
 WORKDIR /app
 
+# Build arguments for user/group configuration
+ARG USER_ID=568
+ARG GROUP_ID=568
+
 # Install OpenSSL for Prisma and build tools for native modules
 RUN apt-get update && apt-get install -y openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
 
@@ -29,5 +33,8 @@ RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
 
 # Data volume for persistent storage
 VOLUME /app/data
+
+# Run as non-root user with configurable UID/GID
+USER ${USER_ID}:${GROUP_ID}
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

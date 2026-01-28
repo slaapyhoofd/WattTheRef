@@ -118,13 +118,23 @@ npm run dev
     BOT_TOKEN=your_telegram_bot_token_here
     ```
 
-2. Start the bot:
+2. (Optional) Customize the user/group IDs and timezone in `docker-compose.yml`:
+
+    ```yaml
+    environment:
+        - BOT_TOKEN=${BOT_TOKEN}
+        - USER_ID=568 # UID for the container process
+        - GROUP_ID=568 # GID for the container process
+        - TZ=Europe/Amsterdam # Timezone for logging (e.g., Europe/Amsterdam, UTC, America/New_York)
+    ```
+
+3. Start the bot:
 
     ```bash
     docker compose up -d
     ```
 
-3. To update to the latest version:
+4. To update to the latest version:
 
     ```bash
     docker compose pull
@@ -136,6 +146,9 @@ npm run dev
 ```bash
 docker run -d --name watttheref \
   -e BOT_TOKEN=your_token_here \
+  -e USER_ID=568 \
+  -e GROUP_ID=568 \
+  -e TZ=Europe/Amsterdam \
   -v watttheref-data:/app/data \
   ghcr.io/slaapyhoofd/watttheref:latest
 ```
@@ -144,8 +157,27 @@ docker run -d --name watttheref \
 
 ```bash
 docker build -t watttheref .
-docker run -d --name watttheref -e BOT_TOKEN=your_token_here -v watttheref-data:/app/data watttheref
+docker run -d --name watttheref \
+  -e BOT_TOKEN=your_token_here \
+  -e USER_ID=568 \
+  -e GROUP_ID=568 \
+  -e TZ=Europe/Amsterdam \
+  -v watttheref-data:/app/data \
+  watttheref
 ```
+
+You can also customize USER_ID and GROUP_ID during build:
+
+```bash
+docker build -t watttheref --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 .
+```
+
+**Environment Variables:**
+
+- `BOT_TOKEN` (required): Your Telegram bot token
+- `USER_ID` (optional, default: 568): UID for the container process. Ensure this user exists on your host system
+- `GROUP_ID` (optional, default: 568): GID for the container process. Ensure this group exists on your host system
+- `TZ` (optional, default: UTC): Timezone for logging timestamps (e.g., `Europe/Amsterdam`, `UTC`, `America/New_York`)
 
 The `-v watttheref-data:/app/data` mounts a named volume to persist the SQLite database across container updates.
 

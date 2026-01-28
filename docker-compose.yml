@@ -5,6 +5,9 @@ services:
         restart: unless-stopped
         environment:
             - BOT_TOKEN=${BOT_TOKEN}
+            - USER_ID=568
+            - GROUP_ID=568
+            - TZ=Europe/Amsterdam
         volumes:
             - watttheref-data:/app/data
 
