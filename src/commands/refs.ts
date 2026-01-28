@@ -2,17 +2,10 @@ import { Telegraf, Context } from 'telegraf';
 import { getCompanyNames, getCompanyByName, getAllReferrals, getAllCompanies, getCompanyById } from '../lib/database';
 import { logCommandStart, logCommandSuccess, logCommandError } from '../lib/logger';
 import { replyAndDelete } from '../lib/helpers';
-
-function buildReferralMessage(companyName: string, referrals: any[]): string {
-    let responseMessage = `🌍 Here are the Planeteers' referral links for ${companyName}. The power is yours! 🌍\n`;
-    for (const referral of referrals) {
-        responseMessage += `• Planeteer @${referral.username}: ${referral.url}\n`;
-    }
-    return responseMessage;
-}
+import { Messages, formatReferralList, formatInvalidCompanyError } from '../lib/text';
 
 function getNoReferralsMessage(companyName: string): string {
-    return `❌ No referral links found for ${companyName} yet.`;
+    return Messages.NO_REFERRALS_ERROR(companyName);
 }
 
 export function registerRefsCommand(bot: Telegraf<Context>) {
@@ -29,7 +22,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
                 const company = await getCompanyByName(companyName);
                 if (!company) {
                     const allowedCompanies = await getCompanyNames();
-                    await replyAndDelete(ctx, `By the power of Gaia, I must inform you that the company you've mentioned is not recognized. Please choose from the following: ${allowedCompanies.join(', ')}`);
+                    await replyAndDelete(ctx, formatInvalidCompanyError(allowedCompanies));
                     return;
                 }
 
@@ -40,7 +33,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
                     return;
                 }
 
-                const responseMessage = buildReferralMessage(company.name, referrals);
+                const responseMessage = formatReferralList(company.name, referrals);
                 await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
                 logCommandSuccess(ctx, 'refs');
                 return;
@@ -50,7 +43,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
             const companies = await getAllCompanies();
 
             if (companies.length === 0) {
-                await replyAndDelete(ctx, '🌍 No companies available yet.');
+                await replyAndDelete(ctx, Messages.NO_COMPANIES_AVAILABLE);
                 return;
             }
 
@@ -58,7 +51,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
                 inline_keyboard: [...companies.map((c) => [{ text: c.name, callback_data: `refs_${c.id}` }])],
             };
 
-            const helpText = `🌍 *View All Referral Links* 🌍\n\n` + `Select a company to view all available referral links from our Planeteers:`;
+            const helpText = Messages.REFS_HELP_HEADER + Messages.REFS_SELECT_PROMPT;
 
             await replyAndDelete(ctx, helpText, {
                 parse_mode: 'Markdown',
@@ -67,7 +60,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
             logCommandSuccess(ctx, 'refs');
         } catch (error) {
             logCommandError(ctx, 'refs', error);
-            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, Messages.GENERIC_ERROR);
         }
     });
 
@@ -81,7 +74,7 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
         try {
             const company = await getCompanyById(companyId);
             if (!company) {
-                await replyAndDelete(ctx, 'Company not found.');
+                await replyAndDelete(ctx, Messages.COMPANY_NOT_FOUND);
                 await ctx.answerCbQuery();
                 return;
             }
@@ -94,13 +87,13 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
                 return;
             }
 
-            const responseMessage = buildReferralMessage(company.name, referrals);
+            const responseMessage = formatReferralList(company.name, referrals);
             await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
             await ctx.answerCbQuery();
             logCommandSuccess(ctx, 'refs');
         } catch (error) {
             logCommandError(ctx, 'refs', error);
-            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, Messages.GENERIC_ERROR);
             await ctx.answerCbQuery();
         }
     });

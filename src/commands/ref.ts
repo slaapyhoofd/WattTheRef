@@ -2,6 +2,7 @@ import { Telegraf, Context } from 'telegraf';
 import { getCompanyByName, getRandomReferral, getCompanyById } from '../lib/database';
 import { logCommandStart, logCommandSuccess, logCommandCancel, logCommandError } from '../lib/logger';
 import { buildCompanyKeyboard, getInvalidCompanyMessage, replyAndDelete } from '../lib/helpers';
+import { Messages, formatReferralLink } from '../lib/text';
 
 export function registerRefCommand(bot: Telegraf<Context>) {
     bot.command('ref', async (ctx) => {
@@ -23,12 +24,12 @@ export function registerRefCommand(bot: Telegraf<Context>) {
                 const randomReferral = await getRandomReferral(company.id);
 
                 if (!randomReferral) {
-                    await replyAndDelete(ctx, `No referral links found for ${company.name} yet. Be the first Planeteer to add one!`);
+                    await replyAndDelete(ctx, Messages.NO_REFERRALS(company.name));
                     logCommandSuccess(ctx, 'ref');
                     return;
                 }
 
-                await ctx.replyWithHTML(`🌍 Here is a referral link for ${company.name} from Planeteer @${randomReferral.username}. Go Planet! 🌍\n${randomReferral.url}`, { link_preview_options: { is_disabled: true } });
+                await ctx.replyWithHTML(formatReferralLink(company.name, randomReferral.username, randomReferral.url), { link_preview_options: { is_disabled: true } });
                 logCommandSuccess(ctx, 'ref');
                 return;
             }
@@ -37,16 +38,16 @@ export function registerRefCommand(bot: Telegraf<Context>) {
             const keyboard = await buildCompanyKeyboard('ref', 'cancel_ref');
 
             if (!keyboard) {
-                await replyAndDelete(ctx, 'No companies available yet.');
+                await replyAndDelete(ctx, Messages.NO_COMPANIES_AVAILABLE);
                 return;
             }
 
-            await replyAndDelete(ctx, '🌍 Select a company to get a referral link:', {
+            await replyAndDelete(ctx, Messages.REF_SELECT_PROMPT, {
                 reply_markup: keyboard,
             });
         } catch (error) {
             logCommandError(ctx, 'ref', error);
-            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, Messages.GENERIC_ERROR);
         }
     });
 
@@ -60,7 +61,7 @@ export function registerRefCommand(bot: Telegraf<Context>) {
         try {
             const company = await getCompanyById(companyId);
             if (!company) {
-                await replyAndDelete(ctx, 'Company not found.');
+                await replyAndDelete(ctx, Messages.COMPANY_NOT_FOUND);
                 await ctx.answerCbQuery();
                 return;
             }
@@ -68,26 +69,26 @@ export function registerRefCommand(bot: Telegraf<Context>) {
             const randomReferral = await getRandomReferral(company.id);
 
             if (!randomReferral) {
-                await replyAndDelete(ctx, `No referral links found for ${company.name} yet. Be the first Planeteer to add one!`);
+                await replyAndDelete(ctx, Messages.NO_REFERRALS(company.name));
                 await ctx.answerCbQuery();
                 logCommandSuccess(ctx, 'ref');
                 return;
             }
 
             // Referral link message persists for user access
-            await ctx.replyWithHTML(`🌍 Here is a referral link for ${company.name} from Planeteer @${randomReferral.username}. Go Planet! 🌍\n${randomReferral.url}`, { link_preview_options: { is_disabled: true } });
+            await ctx.replyWithHTML(formatReferralLink(company.name, randomReferral.username, randomReferral.url), { link_preview_options: { is_disabled: true } });
             await ctx.answerCbQuery();
             logCommandSuccess(ctx, 'ref');
         } catch (error) {
             logCommandError(ctx, 'ref', error);
-            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, Messages.GENERIC_ERROR);
             await ctx.answerCbQuery();
         }
     });
 
     // Handle cancel button
     bot.action('cancel_ref', async (ctx) => {
-        await replyAndDelete(ctx, '❌ Cancelled.');
+        await replyAndDelete(ctx, Messages.CANCELLED_ALT);
         await ctx.answerCbQuery();
         logCommandCancel(ctx, 'ref');
     });
