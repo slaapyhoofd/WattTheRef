@@ -1,6 +1,7 @@
 import { Telegraf, Context } from 'telegraf';
 import { getCompanyNames, getCompanyByName, getAllReferrals } from '../lib/database';
 import { logCommandStart, logCommandSuccess, logCommandError } from '../lib/logger';
+import { replyAndDelete, replyHtmlAndDelete } from '../lib/helpers';
 
 export function registerRefsCommand(bot: Telegraf<Context>) {
     bot.command('refs', async (ctx) => {
@@ -13,21 +14,21 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
 
             if (!companyName) {
                 const allowedCompanies = await getCompanyNames();
-                await ctx.reply(`Please specify a company. Available: ${allowedCompanies.join(', ')}`);
+                await replyAndDelete(ctx, `Please specify a company. Available: ${allowedCompanies.join(', ')}`);
                 return;
             }
 
             const company = await getCompanyByName(companyName);
             if (!company) {
                 const allowedCompanies = await getCompanyNames();
-                await ctx.reply(`By the power of Gaia, I must inform you that the company you've mentioned is not recognized. Please choose from the following: ${allowedCompanies.join(', ')}`);
+                await replyAndDelete(ctx, `By the power of Gaia, I must inform you that the company you've mentioned is not recognized. Please choose from the following: ${allowedCompanies.join(', ')}`);
                 return;
             }
 
             const referrals = await getAllReferrals(company.id);
 
             if (referrals.length === 0) {
-                await ctx.reply(`No referral links found for ${company.name} yet.`);
+                await replyAndDelete(ctx, `No referral links found for ${company.name} yet.`);
                 return;
             }
 
@@ -36,11 +37,11 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
                 responseMessage += `• Planeteer @${referral.username}: ${referral.url}\n`;
             }
 
-            await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
+            await replyHtmlAndDelete(ctx, responseMessage, { link_preview_options: { is_disabled: true } });
             logCommandSuccess(ctx, 'refs');
         } catch (error) {
             logCommandError(ctx, 'refs', error);
-            await ctx.reply('Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
         }
     });
 }

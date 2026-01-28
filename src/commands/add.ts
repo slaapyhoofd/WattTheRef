@@ -1,7 +1,7 @@
 import { Telegraf, Context } from 'telegraf';
 import { getCompanyByName, addReferral, getCompanyById } from '../lib/database';
 import { logCommandStart, logCommandSuccess, logCommandCancel, logCommandError } from '../lib/logger';
-import { buildCompanyKeyboard, getInvalidCompanyMessage } from '../lib/helpers';
+import { buildCompanyKeyboard, getInvalidCompanyMessage, replyAndDelete } from '../lib/helpers';
 
 // Store pending company selections temporarily (userId -> companyId)
 const pendingSelections = new Map<number, number>();
@@ -15,10 +15,10 @@ export function registerAddCommand(bot: Telegraf<Context>) {
         const userId = ctx.from.id;
         if (pendingSelections.has(userId)) {
             pendingSelections.delete(userId);
-            await ctx.reply('❌ Add process cancelled.');
+            await replyAndDelete(ctx, '❌ Add process cancelled.');
             logCommandCancel(ctx, 'add');
         } else {
-            await ctx.reply('No active add process to cancel.');
+            await replyAndDelete(ctx, 'No active add process to cancel.');
             logCommandSuccess(ctx, 'cancel');
         }
     });
@@ -37,18 +37,18 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             if (companyName && url) {
                 const company = await getCompanyByName(companyName);
                 if (!company) {
-                    await ctx.reply(await getInvalidCompanyMessage());
+                    await replyAndDelete(ctx, await getInvalidCompanyMessage());
                     return;
                 }
 
                 const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[\w=&-]*)?$/;
                 if (!urlRegex.test(url)) {
-                    await ctx.reply("Planeteer, your URL doesn't seem to be in the correct format. Remember, the power is yours to provide a valid URL!");
+                    await replyAndDelete(ctx, "Planeteer, your URL doesn't seem to be in the correct format. Remember, the power is yours to provide a valid URL!");
                     return;
                 }
 
                 await addReferral(`${userId}`, username, company.id, url);
-                await ctx.reply(`🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
+                await replyAndDelete(ctx, `🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
                 logCommandSuccess(ctx, 'add');
                 return;
             }
@@ -57,12 +57,12 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             if (companyName) {
                 const company = await getCompanyByName(companyName);
                 if (!company) {
-                    await ctx.reply(await getInvalidCompanyMessage());
+                    await replyAndDelete(ctx, await getInvalidCompanyMessage());
                     return;
                 }
 
                 pendingSelections.set(userId, company.id);
-                await ctx.reply(`📝 Please send the referral URL for ${company.name}:`);
+                await replyAndDelete(ctx, `📝 Please send the referral URL for ${company.name}:`);
                 return;
             }
 
@@ -70,19 +70,19 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             const keyboard = await buildCompanyKeyboard('add', 'cancel_add');
 
             if (!keyboard) {
-                await ctx.reply('No companies available yet.');
+                await replyAndDelete(ctx, 'No companies available yet.');
                 return;
             }
 
             const helpText = `🌍 *Add Your Referral Link* 🌍\n\n` + `You can use this command in two ways:\n\n` + `1️⃣ *Traditional:* \`/add CompanyName https://your-referral-url.com\`\n` + `2️⃣ *Interactive:* Select a company below, then send the URL when prompted.\n\n` + `Select a company to add your referral link:`;
 
-            await ctx.reply(helpText, {
+            await replyAndDelete(ctx, helpText, {
                 parse_mode: 'Markdown',
                 reply_markup: keyboard,
             });
         } catch (error) {
             logCommandError(ctx, 'add', error);
-            await ctx.reply('Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
         }
     });
 
@@ -101,7 +101,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
         }
 
         pendingSelections.set(userId, companyId);
-        await ctx.reply(`📝 Now send me the referral URL for **${company.name}**:\n\n` + `Use /cancel to cancel this process.`, { parse_mode: 'Markdown' });
+        await replyAndDelete(ctx, `📝 Now send me the referral URL for **${company.name}**:\n\n` + `Use /cancel to cancel this process.`, { parse_mode: 'Markdown' });
         await ctx.answerCbQuery();
     });
 
@@ -109,21 +109,21 @@ export function registerAddCommand(bot: Telegraf<Context>) {
     bot.action('cancel_add', async (ctx) => {
         const userId = ctx.from.id;
         pendingSelections.delete(userId);
-        await ctx.reply('❌ Add process cancelled.');
+        await replyAndDelete(ctx, '❌ Add process cancelled.');
         await ctx.answerCbQuery();
         logCommandCancel(ctx, 'add');
     });
 
     // Handle URL input after company selection
-    bot.on('text', async (ctx) => {
-        if (!ctx.message || !('text' in ctx.message)) return;
-        if (ctx.message.text.startsWith('/')) return; // Skip commands
+    bot.on('text', async (ctx, next) => {
+        if (!ctx.message || !('text' in ctx.message)) return next();
+        if (ctx.message.text.startsWith('/')) return next(); // Skip commands
 
         const userId = ctx.from.id;
         const companyId = pendingSelections.get(userId);
 
         // Only process if this user has a pending company selection
-        if (!companyId) return;
+        if (!companyId) return next();
 
         try {
             const url = ctx.message.text;
@@ -131,24 +131,24 @@ export function registerAddCommand(bot: Telegraf<Context>) {
 
             const company = await getCompanyById(companyId);
             if (!company) {
-                await ctx.reply('❌ Company not found. Process cancelled.');
+                await replyAndDelete(ctx, '❌ Company not found. Process cancelled.');
                 pendingSelections.delete(userId);
                 return;
             }
 
             if (!urlRegex.test(url)) {
-                await ctx.reply(`❌ That doesn't look like a valid URL. The add process has been cancelled.\n\n` + `Use /add to try again.`, { parse_mode: 'Markdown' });
+                await replyAndDelete(ctx, `❌ That doesn't look like a valid URL. The add process has been cancelled.\n\n` + `Use /add to try again.`, { parse_mode: 'Markdown' });
                 pendingSelections.delete(userId);
                 return;
             }
 
             await addReferral(`${userId}`, username, company.id, url);
-            await ctx.reply(`🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
+            await replyAndDelete(ctx, `🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
             pendingSelections.delete(userId);
             logCommandSuccess(ctx, 'add');
         } catch (error) {
             logCommandError(ctx, 'add', error);
-            await ctx.reply('Sorry, something went wrong. Please try again later.');
+            await replyAndDelete(ctx, 'Sorry, something went wrong. Please try again later.');
             pendingSelections.delete(userId);
         }
     });
