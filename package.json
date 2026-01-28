@@ -10,6 +10,7 @@
         "start": "node ./dist/src/index.js",
         "typecheck": "tsc --noEmit",
         "format:check": "prettier --check .",
+        "release": "npm version",
         "db:push": "prisma db push",
         "db:studio": "prisma studio",
         "db:seed": "npx tsx prisma/seed.ts"
