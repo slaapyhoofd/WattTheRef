@@ -30,6 +30,31 @@ Example: `/refs Tibber`
 
 ## Setup
 
+### Getting a Telegram Bot Token
+
+1. Open Telegram and search for **@BotFather**
+2. Start a conversation with BotFather and send `/newbot`
+3. Follow the prompts:
+    - Choose a name for your bot (e.g., "WattTheRef Bot")
+    - Choose a username for your bot (must be unique and end with "bot", e.g., "@WattTheRef_bot")
+4. BotFather will provide you with a token in this format: `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`
+5. Save this token - you'll need it in the `.env` file
+
+### Adding the Bot to a Group or Topic
+
+1. **Add the bot to the group**:
+    - Go to Group Settings → Administrators
+    - Click "Add Administrator"
+    - Search for your bot by username (e.g., @WattTheRef_bot)
+    - Select it and grant necessary permissions:
+        - Send Messages
+        - Edit Messages
+        - Delete Messages
+2. **Grant the bot admin privileges**:
+    - Make sure the bot has permissions to post in the group and topics
+
+Now you can use the bot commands in the group!
+
 ### Prerequisites
 
 - Node.js 24+
