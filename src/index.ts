@@ -4,10 +4,12 @@ import { disconnectDatabase } from './lib/database';
 import { registerAddCommand } from './commands/add';
 import { registerRefCommand } from './commands/ref';
 import { registerRefsCommand } from './commands/refs';
+import { registerHelpCommand } from './commands/help';
 
 const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
 // Register commands
+registerHelpCommand(bot);
 registerAddCommand(bot);
 registerRefCommand(bot);
 registerRefsCommand(bot);
