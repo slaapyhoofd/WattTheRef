@@ -60,7 +60,8 @@ export function registerRefCommand(bot: Telegraf<Context>) {
         try {
             const company = await getCompanyById(companyId);
             if (!company) {
-                await ctx.answerCbQuery('Company not found');
+                await replyAndDelete(ctx, 'Company not found.');
+                await ctx.answerCbQuery();
                 return;
             }
 
@@ -73,7 +74,7 @@ export function registerRefCommand(bot: Telegraf<Context>) {
                 return;
             }
 
-            // Referral link message stays permanent (not auto-deleted)
+            // Referral link message persists for user access
             await ctx.replyWithHTML(`🌍 Here is a referral link for ${company.name} from Planeteer @${randomReferral.username}. Go Planet! 🌍\n${randomReferral.url}`, { link_preview_options: { is_disabled: true } });
             await ctx.answerCbQuery();
             logCommandSuccess(ctx, 'ref');
