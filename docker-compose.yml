@@ -1,0 +1,12 @@
+services:
+    watttheref:
+        image: ghcr.io/slaapyhoofd/watttheref:latest
+        container_name: watttheref
+        restart: unless-stopped
+        environment:
+            - BOT_TOKEN=${BOT_TOKEN}
+        volumes:
+            - watttheref-data:/app/data
+
+volumes:
+    watttheref-data:

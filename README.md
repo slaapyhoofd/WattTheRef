@@ -85,7 +85,37 @@ npm run dev
 
 ## Docker
 
-Build and run with Docker:
+### Using Docker Compose (recommended)
+
+1. Create a `.env` file with your bot token:
+
+    ```
+    BOT_TOKEN=your_telegram_bot_token_here
+    ```
+
+2. Start the bot:
+
+    ```bash
+    docker compose up -d
+    ```
+
+3. To update to the latest version:
+
+    ```bash
+    docker compose pull
+    docker compose up -d
+    ```
+
+### Using Docker directly
+
+```bash
+docker run -d --name watttheref \
+  -e BOT_TOKEN=your_token_here \
+  -v watttheref-data:/app/data \
+  ghcr.io/slaapyhoofd/watttheref:latest
+```
+
+### Building locally
 
 ```bash
 docker build -t watttheref .
@@ -95,14 +125,6 @@ docker run -d --name watttheref -e BOT_TOKEN=your_token_here -v watttheref-data:
 The `-v watttheref-data:/app/data` mounts a named volume to persist the SQLite database across container updates.
 
 On first run, the entrypoint script automatically initializes the database and seeds the companies. On subsequent runs, it uses the existing database from the volume.
-
-To update the container while preserving data:
-
-```bash
-docker build -t watttheref .
-docker stop watttheref && docker rm watttheref
-docker run -d --name watttheref -e BOT_TOKEN=your_token_here -v watttheref-data:/app/data watttheref
-```
 
 ## Database
 
