@@ -1,16 +1,15 @@
 import { Telegraf, Context } from 'telegraf';
 import { getCompanyNames, getCompanyByName, getAllReferrals } from '../lib/database';
+import { logCommandStart, logCommandSuccess, logCommandError } from '../lib/logger';
 
 export function registerRefsCommand(bot: Telegraf<Context>) {
     bot.command('refs', async (ctx) => {
+        logCommandStart(ctx, 'refs');
         try {
             if (!ctx.message || !('text' in ctx.message)) return;
 
             const parts = ctx.message.text.split(' ');
             const companyName = parts[1];
-            const username = ctx.from.username ?? ctx.from.first_name;
-
-            console.log(`${username}, ${ctx.message.text}`);
 
             if (!companyName) {
                 const allowedCompanies = await getCompanyNames();
@@ -38,8 +37,9 @@ export function registerRefsCommand(bot: Telegraf<Context>) {
             }
 
             await ctx.replyWithHTML(responseMessage, { link_preview_options: { is_disabled: true } });
+            logCommandSuccess(ctx, 'refs');
         } catch (error) {
-            console.error('Error in /refs command:', error);
+            logCommandError(ctx, 'refs', error);
             await ctx.reply('Sorry, something went wrong. Please try again later.');
         }
     });

@@ -1,5 +1,6 @@
 import { Telegraf, Context } from 'telegraf';
 import { getCompanyNames, getCompanyByName, addReferral, getAllCompanies, getCompanyById } from '../lib/database';
+import { logCommandStart, logCommandSuccess, logCommandCancel, logCommandError } from '../lib/logger';
 
 // Store pending company selections temporarily (userId -> companyId)
 const pendingSelections = new Map<number, number>();
@@ -9,15 +10,19 @@ const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(
 
 export function registerAddCommand(bot: Telegraf<Context>) {
     bot.command('cancel', async (ctx) => {
+        logCommandStart(ctx, 'cancel');
         const userId = ctx.from.id;
         if (pendingSelections.has(userId)) {
             pendingSelections.delete(userId);
             await ctx.reply('❌ Add process cancelled.');
+            logCommandCancel(ctx, 'add');
         } else {
             await ctx.reply('No active add process to cancel.');
+            logCommandSuccess(ctx, 'cancel');
         }
     });
     bot.command('add', async (ctx) => {
+        logCommandStart(ctx, 'add');
         try {
             if (!ctx.message || !('text' in ctx.message)) return;
 
@@ -44,6 +49,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
 
                 await addReferral(`${userId}`, username, company.id, url);
                 await ctx.reply(`🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
+                logCommandSuccess(ctx, 'add');
                 return;
             }
 
@@ -80,7 +86,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
                 reply_markup: keyboard,
             });
         } catch (error) {
-            console.error('Error in /add command:', error);
+            logCommandError(ctx, 'add', error);
             await ctx.reply('Sorry, something went wrong. Please try again later.');
         }
     });
@@ -110,6 +116,7 @@ export function registerAddCommand(bot: Telegraf<Context>) {
         pendingSelections.delete(userId);
         await ctx.reply('❌ Add process cancelled.');
         await ctx.answerCbQuery();
+        logCommandCancel(ctx, 'add');
     });
 
     // Handle URL input after company selection
@@ -143,8 +150,9 @@ export function registerAddCommand(bot: Telegraf<Context>) {
             await addReferral(`${userId}`, username, company.id, url);
             await ctx.reply(`🌍 Great work, Planeteer! Your referral link for ${company.name} has been added. The power is yours! 🌍`);
             pendingSelections.delete(userId);
+            logCommandSuccess(ctx, 'add');
         } catch (error) {
-            console.error('Error processing URL:', error);
+            logCommandError(ctx, 'add', error);
             await ctx.reply('Sorry, something went wrong. Please try again later.');
             pendingSelections.delete(userId);
         }
